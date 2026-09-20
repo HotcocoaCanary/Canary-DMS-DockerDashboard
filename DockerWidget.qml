@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Shapes
 import Quickshell
 import Quickshell.Io
 import qs.Common
@@ -43,6 +44,10 @@ PluginComponent {
     readonly property int runningCount: snapshot.containers.filter(function (c) {
         return c.state === "running";
     }).length
+
+    // The whale is wide and solid, so it carries more weight than a
+    // Material glyph in the same box: give it a slightly smaller one
+    readonly property int logoSize: Math.round(iconSize * 0.85)
 
     readonly property string scriptPath: Qt.resolvedUrl("docker-state.py").toString().replace(/^file:\/\//, "")
 
@@ -737,6 +742,59 @@ PluginComponent {
             Quickshell.execDetached(terminalArgs().concat(logCommand(selectedRow)));
     }
 
+    // --- Brand logo ---
+
+    // DankIcon only speaks Material Symbols, and tinting an SVG through
+    // MultiEffect's mask hard-thresholds its alpha (no antialiasing, no
+    // partial opacity), so the mark is drawn as a Shape filled with the
+    // bar's color instead. Path data is the Docker whale at 1024x1024,
+    // cropped to its bounding box by the transform below.
+    component DockerMark: Item {
+        id: mark
+
+        readonly property real markWidth: 1009
+        readonly property real markHeight: 726
+        property int size: 16
+        property color color: Theme.surfaceText
+
+        implicitWidth: size
+        implicitHeight: Math.round(size * markHeight / markWidth)
+
+        Shape {
+            width: mark.markWidth
+            height: mark.markHeight
+            preferredRendererType: Shape.CurveRenderer
+            transform: [
+                Translate {
+                    x: -10
+                    y: -160
+                },
+                Scale {
+                    xScale: mark.width / mark.markWidth
+                    yScale: mark.height / mark.markHeight
+                }
+            ]
+
+            ShapePath {
+                fillColor: mark.color
+                strokeWidth: -1
+                fillRule: ShapePath.WindingFill
+                PathSvg {
+                    path: "M1004.544 466.08a161.504 161.504 0 0 0-119.52-10.816 158.88 158.88 0 0 0-64.608-101.216l-12.8-10.08-10.848 12.16a133.888 133.888 0 0 0-25.28 96.32 123.552 123.552 0 0 0 24.128 64.704 187.648 187.648 0 0 1-34.752 15.296A232.416 232.416 0 0 1 689.216 544H13.568l-1.44 15.136a282.656 282.656 0 0 0 23.776 147.2l9.248 18.336 1.056 1.728c63.52 104.896 190.24 159.232 311.808 159.232 235.392 0 414.368-112.352 503.552-328.224 59.584 3.04 120.544-14.112 149.696-69.408l7.424-14.112-14.144-7.936zM210.464 739.2a52.832 52.832 0 1 1 54.4-52.832 53.664 53.664 0 0 1-54.4 52.832z"
+                }
+            }
+
+            ShapePath {
+                fillColor: mark.color
+                strokeWidth: -1
+                fillRule: ShapePath.WindingFill
+                PathSvg {
+                    path: "M210.464 658.432a27.808 27.808 0 1 0 28.608 27.84 28.224 28.224 0 0 0-28.608-27.84M64 416h96v96H64z m128 0h96v96h-96z m0-128h96v96h-96z m128 0h96v96h-96z m0 128h96v96h-96z m128 0h96v96h-96z m128 0h96v96h-96zM448 288h96v96h-96z m0-128h96v96h-96z"
+                }
+            }
+        }
+    }
+
     // --- Bar pill ---
 
     readonly property string pillText: {
@@ -753,9 +811,8 @@ PluginComponent {
         Row {
             spacing: Theme.spacingXS
 
-            DankIcon {
-                name: "deployed_code"
-                size: root.iconSize
+            DockerMark {
+                size: root.logoSize
                 color: root.available ? Theme.surfaceText : Theme.surfaceVariantText
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -774,9 +831,8 @@ PluginComponent {
         Column {
             spacing: Theme.spacingXS
 
-            DankIcon {
-                name: "deployed_code"
-                size: root.iconSize
+            DockerMark {
+                size: root.logoSize
                 color: root.available ? Theme.surfaceText : Theme.surfaceVariantText
                 anchors.horizontalCenter: parent.horizontalCenter
             }

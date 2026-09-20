@@ -35,7 +35,7 @@ Bar display (running count / running / total / icon only), hide stopped containe
 ## Installation
 
 ```bash
-git clone https://github.com/HotcocoaCanary/Canary-DMS-Docker.git ~/.config/DankMaterialShell/plugins/dockerDashboard
+git clone https://github.com/HotcocoaCanary/Canary-DMS-DockerDashboard.git ~/.config/DankMaterialShell/plugins/dockerDashboard
 dms ipc call plugin-scan scan
 dms ipc call plugins enable dockerDashboard
 ```

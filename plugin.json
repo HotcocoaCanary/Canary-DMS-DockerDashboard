@@ -1,6 +1,6 @@
 {
-  "id": "canaryDocker",
-  "name": "Docker",
+  "id": "dockerDashboard",
+  "name": "Docker Dashboard",
   "description": "Docker containers, compose projects, images, networks and volumes with start/stop/restart/recreate/delete and live logs",
   "version": "0.1.0",
   "author": "HotcocoaCanary",

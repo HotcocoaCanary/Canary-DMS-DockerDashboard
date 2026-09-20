@@ -7,7 +7,7 @@ import "translations.js" as Tr
 
 PluginSettings {
     id: root
-    pluginId: "canaryDocker"
+    pluginId: "dockerDashboard"
 
     property string lang: (SessionData.locale || Qt.locale().name).split(/[_-]/)[0]
     function tr(key) {

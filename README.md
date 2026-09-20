@@ -4,6 +4,10 @@ A [DMS](https://github.com/AvengeMedia/DankMaterialShell) bar widget for Docker.
 
 ![screenshot](screenshot.png)
 
+Clicking a container or a Compose project opens the detail pane with its live logs:
+
+![live logs](screenshot-logs.png)
+
 The popout opens with just the tree:
 
 - **Tree:** Compose projects (with their containers and networks), standalone containers, images, networks and volumes. Click the chevron to expand or collapse. Hover a row for quick actions.

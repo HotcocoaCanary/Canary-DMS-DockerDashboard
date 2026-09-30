@@ -849,37 +849,25 @@ PluginComponent {
 
     // --- Shared building blocks ---
 
-    component IconButton: Rectangle {
-        property string icon: ""
+    // Round icon button; hovering it puts `hint` into the given root hint property
+    component IconButton: DankActionButton {
         property bool danger: false
         property bool armed: false
         property string hint: ""
         property string hintProp: "hoverHint"
-        signal clicked
-        width: 26
-        height: 26
-        radius: 13
-        color: armed ? Theme.error : btnArea.containsMouse ? Theme.withAlpha(danger ? Theme.error : Theme.primary, 0.18) : "transparent"
-
-        DankIcon {
-            anchors.centerIn: parent
-            name: icon
-            size: 16
-            color: armed ? Theme.primaryText : danger && btnArea.containsMouse ? Theme.error : Theme.surfaceText
+        buttonSize: Theme.buttonHeightXXS
+        iconSize: Theme.iconSizeSmall
+        iconColor: armed ? Theme.primaryText : danger && hovered ? Theme.error : Theme.surfaceText
+        stateColor: danger ? Theme.error : Theme.primary
+        backgroundColor: armed ? Theme.error : "transparent"
+        onEntered: root[hintProp] = hint
+        onExited: {
+            if (root[hintProp] === hint)
+                root[hintProp] = "";
         }
-
-        MouseArea {
-            id: btnArea
-            anchors.fill: parent
-            hoverEnabled: true
-            cursorShape: Qt.PointingHandCursor
-            onClicked: parent.clicked()
-            onContainsMouseChanged: {
-                if (containsMouse)
-                    root[hintProp] = hint;
-                else if (root[hintProp] === hint)
-                    root[hintProp] = "";
-            }
+        onHintChanged: {
+            if (hovered)
+                root[hintProp] = hint;
         }
     }
 
@@ -891,8 +879,8 @@ PluginComponent {
         property bool armed: false
         signal clicked
         width: tbRow.implicitWidth + Theme.spacingM * 2
-        height: 30
-        radius: 15
+        height: Theme.buttonHeightXXS
+        radius: Theme.fullRadius(width, height)
         color: armed ? Theme.error : tbArea.containsMouse ? Theme.withAlpha(danger ? Theme.error : Theme.primary, 0.14) : "transparent"
         border.width: 1
         border.color: armed ? Theme.error : Theme.withAlpha(danger ? Theme.error : Theme.surfaceText, 0.25)
@@ -900,11 +888,11 @@ PluginComponent {
         Row {
             id: tbRow
             anchors.centerIn: parent
-            spacing: 4
+            spacing: Theme.spacingXS
 
             DankIcon {
                 name: icon
-                size: 16
+                size: Theme.iconSizeSmall
                 color: armed ? Theme.primaryText : danger ? Theme.error : Theme.primary
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -1019,15 +1007,15 @@ PluginComponent {
 
                                 Row {
                                     id: lead
-                                    x: row.depth * 18 + 2
+                                    x: row.depth * (Theme.iconSizeSmall + Theme.spacingXXS) + Theme.spacingXXS
                                     anchors.verticalCenter: parent.verticalCenter
-                                    spacing: 6
+                                    spacing: Theme.spacingXS + Theme.spacingXXS
 
                                     // Chevron has its own click target so a project can be
                                     // selected without collapsing it
                                     Item {
-                                        width: 16
-                                        height: 16
+                                        width: Theme.iconSizeSmall
+                                        height: Theme.iconSizeSmall
                                         anchors.verticalCenter: parent.verticalCenter
 
                                         DankIcon {
@@ -1076,7 +1064,7 @@ PluginComponent {
                                         text: row.title
                                         wrapMode: Text.NoWrap
                                         elide: Text.ElideMiddle
-                                        font.pixelSize: rowItem.isDetail ? 11 : Theme.fontSizeSmall
+                                        font.pixelSize: Theme.fontSizeSmall
                                         font.weight: row.kind === "section" || row.kind === "project" ? Font.Medium : Font.Normal
                                         color: rowItem.isDetail ? Theme.surfaceVariantText : Theme.surfaceText
                                     }
@@ -1086,7 +1074,7 @@ PluginComponent {
                                         text: row.subtitle || ""
                                         wrapMode: Text.NoWrap
                                         elide: Text.ElideRight
-                                        font.pixelSize: 11
+                                        font.pixelSize: Theme.fontSizeSmall
                                         color: Theme.surfaceVariantText
                                     }
                                 }
@@ -1101,7 +1089,7 @@ PluginComponent {
 
                                     DankSpinner {
                                         visible: rowItem.isBusy
-                                        size: 16
+                                        size: Theme.iconSizeSmall
                                         running: rowItem.isBusy
                                         anchors.verticalCenter: parent.verticalCenter
                                     }
@@ -1112,7 +1100,7 @@ PluginComponent {
                                         })
                                         delegate: IconButton {
                                             readonly property string token: rowItem.row.key + "|" + modelData.id
-                                            icon: modelData.icon
+                                            iconName: modelData.icon
                                             danger: modelData.danger === true
                                             armed: root.pendingConfirm === token
                                             hint: armed ? modelData.label + " · " + root.tr("Click again to confirm") : modelData.label
@@ -1128,14 +1116,14 @@ PluginComponent {
                     StyledText {
                         id: hintLine
                         width: parent.width
-                        height: 16
+                        height: Theme.fontSizeSmall + Theme.spacingXS
                         text: {
                             if (root.pendingConfirm !== "" && root.hoverHint === "")
                                 return root.tr("Click again to confirm");
                             return root.hoverHint || root.tr("Hover an item for actions");
                         }
                         elide: Text.ElideRight
-                        font.pixelSize: 11
+                        font.pixelSize: Theme.fontSizeSmall
                         color: root.pendingConfirm !== "" ? Theme.error : Theme.surfaceVariantText
                     }
                 }
@@ -1168,12 +1156,12 @@ PluginComponent {
                         // Title line: state dot, name, short id; close collapses the pane
                         Item {
                             width: parent.width
-                            height: 28
+                            height: Theme.buttonHeightXXS
 
                             IconButton {
                                 anchors.right: parent.right
                                 anchors.verticalCenter: parent.verticalCenter
-                                icon: "close"
+                                iconName: "close"
                                 hintProp: "logHint"
                                 hint: root.tr("Close")
                                 onClicked: root.clearSelection()
@@ -1219,7 +1207,7 @@ PluginComponent {
                         StyledText {
                             width: parent.width
                             wrapMode: Text.WordWrap
-                            font.pixelSize: 11
+                            font.pixelSize: Theme.fontSizeSmall
                             color: Theme.surfaceVariantText
                             text: {
                                 var r = rightPane.row;
@@ -1269,10 +1257,10 @@ PluginComponent {
                             Row {
                                 visible: !!rightPane.row && root.busy[rightPane.row.key] === true
                                 spacing: Theme.spacingS
-                                height: 30
+                                height: Theme.buttonHeightXXS
 
                                 DankSpinner {
-                                    size: 16
+                                    size: Theme.iconSizeSmall
                                     running: parent.visible
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
@@ -1288,13 +1276,13 @@ PluginComponent {
                         // Log toolbar
                         Item {
                             width: parent.width
-                            height: 32
+                            height: Theme.buttonHeightXS
 
                             DankTextField {
                                 anchors.left: parent.left
                                 anchors.right: logTools.left
                                 anchors.rightMargin: Theme.spacingXS
-                                height: 32
+                                height: Theme.buttonHeightXS
                                 placeholderText: root.tr("Filter")
                                 text: root.logFilter
                                 onTextChanged: root.logFilter = text
@@ -1306,10 +1294,10 @@ PluginComponent {
                                 anchors.verticalCenter: parent.verticalCenter
 
                                 IconButton {
-                                    icon: root.logFollow ? "vertical_align_bottom" : "pause"
+                                    iconName: root.logFollow ? "vertical_align_bottom" : "pause"
                                     hintProp: "logHint"
                                     hint: root.logFollow ? root.tr("Follow") : root.tr("Paused")
-                                    color: root.logFollow ? Theme.withAlpha(Theme.primary, 0.18) : "transparent"
+                                    backgroundColor: root.logFollow ? Theme.withAlpha(Theme.primary, 0.18) : "transparent"
                                     onClicked: {
                                         root.logFollow = !root.logFollow;
                                         if (root.logFollow)
@@ -1317,26 +1305,26 @@ PluginComponent {
                                     }
                                 }
                                 IconButton {
-                                    icon: "wrap_text"
+                                    iconName: "wrap_text"
                                     hintProp: "logHint"
                                     hint: root.tr("Wrap")
-                                    color: root.logWrap ? Theme.withAlpha(Theme.primary, 0.18) : "transparent"
+                                    backgroundColor: root.logWrap ? Theme.withAlpha(Theme.primary, 0.18) : "transparent"
                                     onClicked: root.logWrap = !root.logWrap
                                 }
                                 IconButton {
-                                    icon: "content_copy"
+                                    iconName: "content_copy"
                                     hintProp: "logHint"
                                     hint: root.tr("Copy all")
                                     onClicked: root.copyLogs()
                                 }
                                 IconButton {
-                                    icon: "delete_sweep"
+                                    iconName: "delete_sweep"
                                     hintProp: "logHint"
                                     hint: root.tr("Clear")
                                     onClicked: logModel.clear()
                                 }
                                 IconButton {
-                                    icon: "open_in_new"
+                                    iconName: "open_in_new"
                                     hintProp: "logHint"
                                     hint: root.tr("Open in terminal")
                                     onClicked: root.openLogsInTerminal()
@@ -1378,14 +1366,14 @@ PluginComponent {
                                 height: match ? lineText.implicitHeight : 0
                                 visible: match
 
-                                Text {
+                                StyledText {
                                     id: lineText
                                     width: parent.width
                                     textFormat: Text.StyledText
                                     wrapMode: root.logWrap ? Text.WrapAnywhere : Text.NoWrap
                                     elide: root.logWrap ? Text.ElideNone : Text.ElideRight
-                                    font.family: Theme.monoFontFamily
-                                    font.pixelSize: 11
+                                    isMonospace: true
+                                    font.pixelSize: Theme.fontSizeSmall
                                     color: level === 2 ? Theme.error : level === 1 ? Theme.warning : Theme.surfaceText
                                     text: {
                                         function esc(s) {
@@ -1408,9 +1396,9 @@ PluginComponent {
                         visible: !!rightPane.row
                         anchors.bottom: parent.bottom
                         width: parent.width
-                        height: 16
+                        height: Theme.fontSizeSmall + Theme.spacingXS
                         elide: Text.ElideRight
-                        font.pixelSize: 11
+                        font.pixelSize: Theme.fontSizeSmall
                         color: Theme.surfaceVariantText
                         text: root.logHint || ((logProcess.running ? root.tr("Streaming") : root.tr("Log stream ended")) + "  ·  " + logModel.count + " " + root.tr("lines") + (root.logFollow ? "" : "  ·  " + root.tr("Paused")))
                     }

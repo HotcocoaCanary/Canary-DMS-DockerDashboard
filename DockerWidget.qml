@@ -5,6 +5,7 @@ import Quickshell.Io
 import qs.Common
 import qs.Services
 import qs.Widgets
+import qs.DCommon.Widgets
 import qs.Modules.Plugins
 import "translations.js" as Tr
 
@@ -744,7 +745,7 @@ PluginComponent {
 
     // --- Brand logo ---
 
-    // DankIcon only speaks Material Symbols, and tinting an SVG through
+    // DIcon only speaks Material Symbols, and tinting an SVG through
     // MultiEffect's mask hard-thresholds its alpha (no antialiasing, no
     // partial opacity), so the mark is drawn as a Shape filled with the
     // bar's color instead. Path data is the Docker whale at 1024x1024,
@@ -850,7 +851,7 @@ PluginComponent {
     // --- Shared building blocks ---
 
     // Round icon button; hovering it puts `hint` into the given root hint property
-    component IconButton: DankActionButton {
+    component IconButton: DActionButton {
         property bool danger: false
         property bool armed: false
         property string hint: ""
@@ -890,7 +891,7 @@ PluginComponent {
             anchors.centerIn: parent
             spacing: Theme.spacingXS
 
-            DankIcon {
+            DIcon {
                 name: icon
                 size: Theme.iconSizeSmall
                 color: armed ? Theme.primaryText : danger ? Theme.error : Theme.primary
@@ -1018,7 +1019,7 @@ PluginComponent {
                                         height: Theme.iconSizeSmall
                                         anchors.verticalCenter: parent.verticalCenter
 
-                                        DankIcon {
+                                        DIcon {
                                             anchors.centerIn: parent
                                             name: "chevron_right"
                                             size: 16
@@ -1042,7 +1043,7 @@ PluginComponent {
                                         color: row.dot || "transparent"
                                         anchors.verticalCenter: parent.verticalCenter
                                     }
-                                    DankIcon {
+                                    DIcon {
                                         visible: !!row.icon
                                         name: row.icon || ""
                                         size: 16
@@ -1087,7 +1088,7 @@ PluginComponent {
                                     anchors.verticalCenter: parent.verticalCenter
                                     visible: rowItem.actions.length > 0 && (rowArea.containsMouse || rowItem.isBusy || rowItem.armedHere)
 
-                                    DankSpinner {
+                                    DSpinner {
                                         visible: rowItem.isBusy
                                         size: Theme.iconSizeSmall
                                         running: rowItem.isBusy
@@ -1259,7 +1260,7 @@ PluginComponent {
                                 spacing: Theme.spacingS
                                 height: Theme.buttonHeightXXS
 
-                                DankSpinner {
+                                DSpinner {
                                     size: Theme.iconSizeSmall
                                     running: parent.visible
                                     anchors.verticalCenter: parent.verticalCenter
@@ -1278,7 +1279,7 @@ PluginComponent {
                             width: parent.width
                             height: Theme.buttonHeightXS
 
-                            DankTextField {
+                            DTextField {
                                 anchors.left: parent.left
                                 anchors.right: logTools.left
                                 anchors.rightMargin: Theme.spacingXS

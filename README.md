@@ -1,6 +1,6 @@
 # Docker Dashboard
 
-A [DMS](https://github.com/AvengeMedia/DankMaterialShell) bar widget for Docker.
+A [Dux Shell](https://github.com/duxlabs-dev/dux-shell) bar widget for Docker.
 
 ![screenshot](screenshot.png)
 
@@ -39,9 +39,9 @@ Bar display (running count / running / total / icon only), hide stopped containe
 ## Installation
 
 ```bash
-git clone https://github.com/HotcocoaCanary/Canary-DMS-DockerDashboard.git ~/.config/DankMaterialShell/plugins/dockerDashboard
+git clone https://github.com/HotcocoaCanary/Canary-DMS-DockerDashboard.git ~/.config/dms/plugins/dockerDashboard
 dms ipc call plugin-scan scan
 dms ipc call plugins enable dockerDashboard
 ```
 
-Then add it to the bar under DMS Settings > Bar.
+Then add it to the bar under Settings > Bar.
